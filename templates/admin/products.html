@@ -1,0 +1,826 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Products - MultiShop Admin{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-dashboard.css') }}">
+<style>
+    /* Additional styles for image preview */
+    .additional-images-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .additional-image-item {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    .additional-image-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .image-preview {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+    }
+    
+    .additional-images-container {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+    
+    .image-upload-wrapper {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .image-upload-wrapper:hover {
+        border-color: #0d6efd;
+    }
+    
+    .image-upload-wrapper input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+    
+    .upload-icon {
+        font-size: 2rem;
+        color: #6c757d;
+    }
+    
+    .upload-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 4px;
+        background-color: #0d6efd;
+        transition: width 0.3s ease;
+    }
+    
+    .image-preview-wrapper {
+        position: relative;
+        width: 150px;
+        height: 150px;
+    }
+    
+    .remove-image {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 24px;
+        height: 24px;
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .upload-animation {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    
+    .upload-animation.active {
+        display: flex;
+    }
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #0d6efd;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid admin-container">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="admin-sidebar">
+                <div class="text-center mb-4">
+                    <h3 class="mb-3">Admin Panel</h3>
+                    <p class="text-muted mb-0">{{ current_user_name if current_user_name else 'Administrator' }}</p>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i> <span data-i18n="admin_dashboard">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin_products') }}">
+                            <i class="fas fa-box"></i> <span data-i18n="manage_products">Manage Products</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_categories') }}">
+                            <i class="fas fa-tags"></i> <span data-i18n="manage_categories">Manage Categories</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_banners') }}">
+                            <i class="fas fa-image"></i> <span data-i18n="manage_banners">Manage Banners</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('stats_dashboard') }}" target="_blank">
+                            <i class="fas fa-chart-pie"></i> <span data-i18n="view_statistics">View Statistics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mt-3">
+                        <a class="nav-link text-danger" href="{{ url_for('admin_logout') }}">
+                            <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8">
+            <div class="admin-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        {% if edit_mode and product %}
+                            <h1 class="display-5 fw-bold mb-0">Edit Product</h1>
+                            <p class="text-muted mt-2">Update an existing product</p>
+                        {% else %}
+                            <h1 class="display-5 fw-bold mb-0">Manage Products</h1>
+                            <p class="text-muted mt-2">Create and manage store products</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-primary rounded-pill" target="_blank">
+                            <i class="fas fa-eye me-1"></i> View Site
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Product Form -->
+                <div class="admin-card mb-4">
+                    <div class="card-body p-0">
+                        {% if edit_mode and product %}
+                            <h3 class="card-title">
+                                <i class="fas fa-edit me-2 text-primary"></i>
+                                Edit Product
+                            </h3>
+                            <form method="post" action="{{ url_for('edit_product', product_id=product.id) }}" 
+                                  class="admin-form mt-4 needs-validation" enctype="multipart/form-data" novalidate>
+                        {% else %}
+                            <h3 class="card-title">
+                                <i class="fas fa-plus-circle me-2 text-success"></i>
+                                Add New Product
+                            </h3>
+                            <form method="post" action="{{ url_for('admin_products') }}" 
+                                  class="admin-form mt-4 needs-validation" enctype="multipart/form-data" novalidate>
+                        {% endif %}
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="name" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required 
+                                           value="{{ product.name if product else '' }}">
+                                    <div class="invalid-feedback">
+                                        Please enter a product name.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="category_id" class="form-label">Category</label>
+                                    <select class="form-select" id="category_id" name="category_id" required>
+                                        <option value="" disabled selected>Select a category</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}" 
+                                                    {% if product and product.category_id == category.id %}selected{% endif %}>
+                                                {{ category.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a category.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="price" class="form-label">Price ($)</label>
+                                    <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required 
+                                           value="{{ product.price if product else '' }}">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid price.
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="stock" class="form-label">Stock Quantity</label>
+                                    <input type="number" class="form-control" id="stock" name="stock" min="0" step="1" required 
+                                           value="{{ product.stock if product else '0' }}">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid stock quantity.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" required>{{ product.description if product else '' }}</textarea>
+                                <div class="invalid-feedback">
+                                    Please enter a product description.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="affiliate_link" class="form-label">Amazon Affiliate Link</label>
+                                <input type="url" class="form-control" id="affiliate_link" name="affiliate_link" 
+                                       value="{{ product.affiliate_link if product else '' }}" placeholder="https://amazon.com/your-affiliate-link">
+                                <div class="form-text">Enter Amazon affiliate link for "Buy Now" button</div>
+                            </div>
+                            
+                            <!-- Asosiy rasm (yashil ramka) -->
+                            <div class="col-md-6 mb-3">
+                                <label for="image" class="form-label">Main Product Image</label>
+                                <div class="image-upload-wrapper main-image-upload">
+                                    <input type="file" class="form-control" id="image" name="image" 
+                                           accept="image/*" {% if not product %}required{% endif %}
+                                           onchange="handleMainImage(this)">
+                                    <div class="upload-animation">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                                {% if product and product.image_file %}
+                                    <div class="image-preview-wrapper mt-2">
+                                        <img src="{{ url_for('static', filename='uploads/products/' + product.image_file) }}" 
+                                             alt="Product Image" class="image-preview">
+                                        <span class="remove-image" onclick="removeMainImage(this)">×</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Qo'shimcha rasmlar (sariq ramka) -->
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Additional Images</label>
+                                <div class="additional-images-container" id="additionalImagesContainer">
+                                    {% if product and additional_images %}
+                                        {% for image in additional_images %}
+                                            <div class="image-preview-wrapper">
+                                                <img src="{{ url_for('static', filename='uploads/products/' + image) }}" 
+                                                     alt="Additional Image" class="image-preview">
+                                                <span class="remove-image" onclick="removeAdditionalImage(this, '{{ image }}')">×</span>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    
+                                    <div class="image-upload-wrapper additional-image-upload">
+                                        <input type="file" multiple accept="image/*" 
+                                               onchange="handleAdditionalImages(this)">
+                                        <i class="fas fa-plus upload-icon"></i>
+                                        <div class="upload-animation">
+                                            <div class="spinner"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+<script>
+// Asosiy rasm uchun funksiyalar
+function handleMainImage(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (!file.type.startsWith('image/')) {
+            alert('Faqat rasm fayllarini yuklash mumkin!');
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let container = input.closest('.col-md-6');
+            let previewWrapper = container.querySelector('.image-preview-wrapper');
+            
+            if (!previewWrapper) {
+                previewWrapper = document.createElement('div');
+                previewWrapper.className = 'image-preview-wrapper mt-2';
+                container.appendChild(previewWrapper);
+            }
+            
+            previewWrapper.innerHTML = `
+                <img src="${e.target.result}" alt="Product Image" class="image-preview">
+                <span class="remove-image" onclick="removeMainImage(this)">×</span>
+            `;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function removeMainImage(button) {
+    const wrapper = button.closest('.image-preview-wrapper');
+    const input = wrapper.parentElement.querySelector('input[type="file"]');
+    input.value = '';
+    wrapper.remove();
+}
+
+// Qo'shimcha rasmlar uchun funksiyalar
+function handleAdditionalImages(input) {
+    if (input.files) {
+        Array.from(input.files).forEach(file => {
+            if (!file.type.startsWith('image/')) {
+                alert('Faqat rasm fayllarini yuklash mumkin!');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const container = document.getElementById('additionalImagesContainer');
+                const uploadWrapper = container.querySelector('.additional-image-upload');
+                
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'image-preview-wrapper';
+                previewWrapper.innerHTML = `
+                    <img src="${e.target.result}" alt="Additional Image" class="image-preview">
+                    <span class="remove-image" onclick="removeAdditionalImage(this)">×</span>
+                `;
+                
+                container.insertBefore(previewWrapper, uploadWrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+        // Inputni tozalash, yangi rasmlar qo'shish uchun
+        input.value = '';
+    }
+}
+
+function removeAdditionalImage(button) {
+    button.closest('.image-preview-wrapper').remove();
+}
+</script>
+
+<style>
+.image-upload-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.main-image-upload {
+    border-color: #28a745;  /* Yashil ramka */
+}
+
+.additional-image-upload {
+    border-color: #ffc107;  /* Sariq ramka */
+}
+
+.image-upload-wrapper:hover {
+    border-color: #0d6efd;
+}
+
+.image-preview-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 5px;
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.remove-image {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.additional-images-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.upload-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-animation.active {
+    display: flex;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+                            
+                            {% if edit_mode and product %}
+                            <div class="col-md-12 mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="delete_image" name="delete_image">
+                                    <label class="form-check-label" for="delete_image">Delete main image</label>
+                                </div>
+                                
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="delete_additional_images" name="delete_additional_images">
+                                    <label class="form-check-label" for="delete_additional_images">Delete all additional images</label>
+                                </div>
+                                
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="replace_additional_images" name="replace_additional_images">
+                                    <label class="form-check-label" for="replace_additional_images">Replace existing additional images with new uploads</label>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="is_hot" name="is_hot"
+                                                   {% if product and product.is_hot %}checked{% endif %}>
+                                            <label class="form-check-label" for="is_hot">Hot Product</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="is_new" name="is_new"
+                                                   {% if product and product.is_new %}checked{% endif %}>
+                                            <label class="form-check-label" for="is_new">New Product</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="is_sale" name="is_sale"
+                                                   {% if product and product.is_sale %}checked{% endif %}>
+                                            <label class="form-check-label" for="is_sale">Sale Product</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="is_trending" name="is_trending"
+                                                   {% if product and product.is_trending %}checked{% endif %}>
+                                            <label class="form-check-label" for="is_trending">Trending Product</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                {% if edit_mode and product %}
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-1"></i> Update Product
+                                    </button>
+                                    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
+                                        <i class="fas fa-times me-1"></i> Cancel
+                                    </a>
+                                {% else %}
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus-circle me-1"></i> Add Product
+                                    </button>
+                                    <button type="reset" class="btn btn-secondary">
+                                        <i class="fas fa-redo me-1"></i> Reset
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Products List -->
+                {% if not edit_mode %}
+                    <div class="admin-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="card-title mb-0">
+                                <i class="fas fa-list me-2 text-primary"></i>
+                                Products List
+                            </h3>
+                            <div class="input-group" style="width: 250px;">
+                                <input type="text" id="productSearch" class="form-control" placeholder="Search products...">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="btn-group" role="group" aria-label="Filter products">
+                                <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                                <button type="button" class="btn btn-outline-danger" data-filter="hot">Hot</button>
+                                <button type="button" class="btn btn-outline-info" data-filter="trending">Trending</button>
+                                <button type="button" class="btn btn-outline-warning" data-filter="low-stock">Low Stock</button>
+                            </div>
+                        </div>
+                        
+                        {% if products %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle admin-list-table" id="productsTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 60px;">Image</th>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>Category</th>
+                                            <th>Stock</th>
+                                            <th>Status</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in products %}
+                                            <tr class="product-row{% if product.is_hot %} hot{% endif %}{% if product.is_trending %} trending{% endif %}{% if product.stock > 0 and product.stock < 5 %} low-stock{% endif %}">
+                                                <td>
+                                                    {% if product.image_file %}
+                                                        <img src="{{ url_for('static', filename='uploads/products/' + product.image_file) }}" alt="{{ product.name }}" class="admin-list-img">
+                                                    {% else %}
+                                                        <div class="no-image">No img</div>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ product.name }}</td>
+                                                <td>${{ "%.2f"|format(product.price) }}</td>
+                                                <td>{{ product.category.name }}</td>
+                                                <td>
+                                                    {% if product.stock > 5 %}
+                                                        <span class="badge bg-success px-2 py-1">{{ product.stock }}</span>
+                                                    {% elif product.stock > 0 %}
+                                                        <span class="badge bg-warning px-2 py-1">{{ product.stock }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger px-2 py-1">Out of stock</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if product.is_hot %}
+                                                        <span class="badge bg-danger">HOT</span>
+                                                    {% endif %}
+                                                    {% if product.is_trending %}
+                                                        <span class="badge bg-primary">TRENDING</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="admin-actions">
+                                                        <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <!-- Delete button (with confirmation modal) -->
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProductModal{{ product.id }}">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Delete Confirmation Modal -->
+                                                        <div class="modal fade" id="deleteProductModal{{ product.id }}" tabindex="-1" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">Confirm Deletion</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>Are you sure you want to delete the product <strong>{{ product.name }}</strong>?</p>
+                                                                        <p class="text-danger"><small>This action cannot be undone.</small></p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        <form method="post" action="{{ url_for('delete_product', product_id=product.id) }}">
+                                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="fas fa-box mb-3"></i>
+                                    <h4>No Products Yet</h4>
+                                    <p class="text-muted">Get started by adding your first product.</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block admin_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // Main image upload preview
+        const mainImageInput = document.getElementById('image');
+        if (mainImageInput) {
+            mainImageInput.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (file) {
+                    // Check file size
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size must be less than 5MB');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        let previewWrapper = document.querySelector('.image-preview-wrapper');
+                        if (!previewWrapper) {
+                            previewWrapper = document.createElement('div');
+                            previewWrapper.className = 'image-preview-wrapper mt-2';
+                            mainImageInput.parentElement.after(previewWrapper);
+                        }
+                        
+                        let previewImage = previewWrapper.querySelector('img');
+                        if (!previewImage) {
+                            previewImage = document.createElement('img');
+                            previewImage.className = 'image-preview';
+                            previewImage.alt = 'Product image';
+                            previewWrapper.appendChild(previewImage);
+                        }
+                        
+                        previewImage.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                    
+                    // Show upload animation
+                    const uploadAnimation = this.parentElement.querySelector('.upload-animation');
+                    if (uploadAnimation) {
+                        uploadAnimation.style.display = 'flex';
+                        setTimeout(() => {
+                            uploadAnimation.style.display = 'none';
+                        }, 1000);
+                    }
+                }
+            });
+        }
+        
+        // Additional images upload preview
+        const additionalImagesInput = document.getElementById('additional_images');
+        if (additionalImagesInput) {
+            additionalImagesInput.addEventListener('change', function(e) {
+                const files = Array.from(this.files);
+                
+                // Check number of files
+                if (files.length > 5) {
+                    alert('You can only upload up to 5 images');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file sizes
+                const oversizedFiles = files.filter(file => file.size > 5 * 1024 * 1024);
+                if (oversizedFiles.length > 0) {
+                    alert('Each file must be less than 5MB');
+                    this.value = '';
+                    return;
+                }
+                
+                // Clear existing previews
+                const container = document.getElementById('additionalImagesContainer');
+                const existingPreviews = container.querySelectorAll('.image-preview-wrapper:not(.additional-image-upload)');
+                existingPreviews.forEach(preview => preview.remove());
+                
+                // Show previews
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewWrapper = document.createElement('div');
+                        previewWrapper.className = 'image-preview-wrapper';
+                        
+                        const previewImage = document.createElement('img');
+                        previewImage.className = 'image-preview';
+                        previewImage.src = e.target.result;
+                        previewImage.alt = 'Additional image';
+                        
+                        const removeButton = document.createElement('div');
+                        removeButton.className = 'remove-image';
+                        removeButton.innerHTML = '<i class="fas fa-times"></i>';
+                        removeButton.onclick = function() {
+                            previewWrapper.remove();
+                        };
+                        
+                        previewWrapper.appendChild(previewImage);
+                        previewWrapper.appendChild(removeButton);
+                        container.insertBefore(previewWrapper, container.lastElementChild);
+                    }
+                    reader.readAsDataURL(file);
+                });
+                
+                // Show upload animation
+                const uploadAnimation = this.parentElement.querySelector('.upload-animation');
+                if (uploadAnimation) {
+                    uploadAnimation.style.display = 'flex';
+                    setTimeout(() => {
+                        uploadAnimation.style.display = 'none';
+                    }, 1000);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

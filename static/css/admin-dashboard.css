@@ -1,0 +1,285 @@
+/* Admin Dashboard Styles */
+
+:root {
+  --admin-primary: #3a6ea5; /* O'zgartirilgan asosiy ko'k rang */
+  --admin-secondary: #2a517a; /* O'zgartirilgan ikkilamchi ko'k rang */
+  --admin-success: #1cc88a;
+  --admin-info: #36b9cc;
+  --admin-warning: #f6c23e;
+  --admin-danger: #e74a3b;
+  --admin-light: #f8f9fc;
+  --admin-dark: #5a5c69;
+  --admin-sidebar-bg: #3a6ea5; /* O'zgartirilgan sidebar rangi */
+  --admin-sidebar-dark: #2a517a; /* O'zgartirilgan to'q sidebar rangi */
+}
+
+.admin-container {
+  background-color: #f8f9fc;
+  min-height: calc(100vh - 56px);
+}
+
+/* Sidebar Styles */
+.admin-sidebar {
+  background: linear-gradient(180deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+  border-radius: 10px;
+  color: #fff;
+  padding: 25px 15px;
+  box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+  height: 100%;
+}
+
+.admin-sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.8rem 1rem;
+  border-radius: 7px;
+  margin-bottom: 5px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.admin-sidebar .nav-link i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+}
+
+/* Admin Content */
+.admin-content {
+  padding: 25px;
+}
+
+.admin-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.1);
+  margin-bottom: 25px;
+  overflow: hidden;
+}
+
+.admin-card .card-body {
+  padding: 25px;
+}
+
+.admin-card .card-title {
+  font-weight: 600;
+  color: var(--admin-dark);
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e3e6f0;
+}
+
+/* Form Styles */
+.admin-form .form-control,
+.admin-form .form-select {
+  padding: 0.8rem 1rem;
+  border-radius: 7px;
+  border: 1px solid #d1d3e2;
+  box-shadow: none;
+  transition: all .25s ease-in-out;
+  background-color: #fff;
+}
+
+.admin-form .form-control:hover,
+.admin-form .form-select:hover {
+  border-color: #b6c3e0;
+  background-color: #f9fafd;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(78, 115, 223, 0.08);
+}
+
+.admin-form .form-control:focus,
+.admin-form .form-select:focus {
+  border-color: #bac8f3;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.2);
+  background-color: #fff;
+  transform: translateY(-1px);
+}
+
+.admin-form .form-label {
+  font-weight: 500;
+  color: var(--admin-dark);
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+/* Buttons */
+.admin-form .btn-primary {
+  background-color: var(--admin-primary);
+  border-color: var(--admin-primary);
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  border-radius: 7px;
+  transition: all 0.2s ease;
+}
+
+.admin-form .btn-primary:hover {
+  background-color: var(--admin-secondary);
+  border-color: var(--admin-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(58, 110, 165, 0.2);
+}
+
+.admin-form .btn-secondary {
+  background-color: #eaecf4;
+  border-color: #eaecf4;
+  color: var(--admin-dark);
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  border-radius: 7px;
+  transition: all 0.2s ease;
+}
+
+.admin-form .btn-secondary:hover {
+  background-color: #d4d8e2;
+  border-color: #d4d8e2;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(78, 115, 223, 0.1);
+}
+
+/* Tables */
+.admin-list-table {
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.admin-list-table thead th {
+  background-color: #f8f9fc;
+  color: var(--admin-dark);
+  font-weight: 600;
+  padding: 15px;
+  border-bottom: 2px solid #e3e6f0;
+}
+
+.admin-list-table tbody td {
+  padding: 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid #e3e6f0;
+}
+
+.admin-list-table tbody tr:hover {
+  background-color: #f8f9fc;
+}
+
+.admin-list-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-list-table .img-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Action Buttons */
+.action-buttons .btn {
+  margin-left: 5px;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+/* Stats Cards */
+.stat-card {
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.1);
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 .25rem 2rem 0 rgba(58,59,69,.2);
+}
+
+.stat-card .icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 2.5rem;
+  opacity: 0.3;
+}
+
+.stat-card .number {
+  font-size: 2rem;
+  font-weight: 600; /* Shrift vazni - ilgari 700 */
+  margin-bottom: 5px;
+}
+
+.stat-card .title {
+  font-size: 0.9rem;
+  color: #6e707e;
+  margin-bottom: 0;
+}
+
+.stat-card .progress {
+  height: 0.5rem;
+  margin-top: 15px;
+  border-radius: 5px;
+}
+
+.stat-card-primary {
+  background-color: #fff;
+  border-left: 4px solid var(--admin-primary);
+}
+
+.stat-card-primary .number {
+  color: var(--admin-primary);
+}
+
+.stat-card-success {
+  background-color: #fff;
+  border-left: 4px solid var(--admin-success);
+}
+
+.stat-card-success .number {
+  color: var(--admin-success);
+}
+
+.stat-card-info {
+  background-color: #fff;
+  border-left: 4px solid var(--admin-info);
+}
+
+.stat-card-info .number {
+  color: var(--admin-info);
+}
+
+.stat-card-warning {
+  background-color: #fff;
+  border-left: 4px solid var(--admin-warning);
+}
+
+.stat-card-warning .number {
+  color: var(--admin-warning);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .admin-sidebar {
+    margin-bottom: 25px;
+    height: auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .admin-content {
+    padding: 15px;
+  }
+  
+  .admin-card .card-body {
+    padding: 15px;
+  }
+  
+  .stat-card .number {
+    font-size: 1.5rem;
+  }
+}

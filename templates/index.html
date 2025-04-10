@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block title %}MultiShop - Your One-Stop E-commerce Destination{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+{% if banners %}
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for banner in banners %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <div class="hero-banner">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6">
+                                <div class="hero-content">
+                                    <h1 class="hero-title">{{ banner.translated_title }}</h1>
+                                    <p class="hero-subtitle">{{ banner.translated_subtitle }}</p>
+                                    <a href="{{ banner.button_link }}" class="btn btn-accent btn-lg">
+                                        {{ banner.translated_button_text }}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 text-center">
+                                <img src="{{ banner.image_url }}" alt="{{ banner.translated_title }}" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if banners|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        {% endif %}
+    </div>
+{% endif %}
+
+<!-- Categories Section -->
+<section class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title" data-i18n="browse_categories">Browse Categories</h2>
+        <a href="{{ url_for('all_categories') }}" class="btn btn-outline-primary btn-sm rounded-pill" data-i18n="view_all">View All</a>
+    </div>
+    
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-4 col-lg-3 col-sm-6">
+                <a href="{{ url_for('category_products', category_id=category.id) }}" class="text-decoration-none">
+                    <div class="category-card">
+                        <img src="{{ category.image_url }}" alt="{{ category.translated_name }}" class="category-img">
+                        <div class="category-overlay">
+                            <h3 class="category-title">{{ category.translated_name }}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Popular Products Section -->
+<section class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title" data-i18n="popular_products">Popular Products</h2>
+    </div>
+    
+    <div class="row">
+        {% for product in popular_products %}
+            <div class="col-md-4 col-lg-3 col-sm-6">
+                <div class="product-card">
+                    {% if product.is_hot %}
+                        <div class="product-badge">
+                            <span class="badge-hot" data-i18n="hot">Hot</span>
+                        </div>
+                    {% elif product.is_trending %}
+                        <div class="product-badge">
+                            <span class="badge-trending" data-i18n="trending">Trending</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="product-img-container">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            <img src="{{ product.image_url }}" alt="{{ product.translated_name }}" class="product-img">
+                        </a>
+                    </div>
+                    
+                    <div class="product-details">
+                        <h3 class="product-title">{{ product.translated_name }}</h3>
+                        <div class="product-category">{{ product.category.translated_name }}</div>
+                        
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        
+                        <div class="product-price">{{ "$%.2f"|format(product.price) }}</div>
+                        
+                        <div class="product-actions">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-details" data-i18n="details">Details</a>
+                            
+                            {% if product.id not in wishlist_product_ids %}
+                                <a href="{{ url_for('add_to_wishlist', product_id=product.id) }}" class="btn btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('remove_from_wishlist', product_id=product.id) }}" class="btn btn-wishlist active">
+                                    <i class="bi bi-heart-fill"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Trending Products Section -->
+<section class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title" data-i18n="trending_products">Trending Products</h2>
+    </div>
+    
+    <div class="row">
+        {% for product in trending_products %}
+            <div class="col-md-4 col-lg-3 col-sm-6">
+                <div class="product-card">
+                    {% if product.is_hot %}
+                        <div class="product-badge">
+                            <span class="badge-hot" data-i18n="hot">Hot</span>
+                        </div>
+                    {% elif product.is_trending %}
+                        <div class="product-badge">
+                            <span class="badge-trending" data-i18n="trending">Trending</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="product-img-container">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            <img src="{{ product.image_url }}" alt="{{ product.translated_name }}" class="product-img">
+                        </a>
+                    </div>
+                    
+                    <div class="product-details">
+                        <h3 class="product-title">{{ product.translated_name }}</h3>
+                        <div class="product-category">{{ product.category.translated_name }}</div>
+                        
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        
+                        <div class="product-price">{{ "$%.2f"|format(product.price) }}</div>
+                        
+                        <div class="product-actions">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-details" data-i18n="details">Details</a>
+                            
+                            {% if product.id not in wishlist_product_ids %}
+                                <a href="{{ url_for('add_to_wishlist', product_id=product.id) }}" class="btn btn-wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('remove_from_wishlist', product_id=product.id) }}" class="btn btn-wishlist active">
+                                    <i class="bi bi-heart-fill"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

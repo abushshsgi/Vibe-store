@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if category %}{{ category.name }} - MultiShop{% else %}All Categories - MultiShop{% endif %}
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}" data-i18n="nav_home">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('all_categories') }}" data-i18n="nav_categories">Categories</a></li>
+        {% if category %}
+            <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        {% else %}
+            <li class="breadcrumb-item active" aria-current="page" data-i18n="all_categories">All Categories</li>
+        {% endif %}
+    </ol>
+</nav>
+
+{% if categories and not category %}
+    <!-- All Categories View -->
+    <h1 class="mt-4 mb-4" data-i18n="all_categories">All Categories</h1>
+    
+    <div class="row">
+        {% for cat in categories %}
+            <div class="col-lg-3 col-md-4 col-6 mb-4">
+                <a href="{{ url_for('category_products', category_id=cat.id) }}" class="text-decoration-none">
+                    <div class="category-card">
+                        <img src="{{ cat.image_url }}" alt="{{ cat.name }}" class="category-img">
+                        <div class="category-overlay">
+                            <h3 class="category-title">{{ cat.name }}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- Category Products View -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+        <h1>{{ category.name }}</h1>
+        <a href="{{ url_for('all_categories') }}" class="btn btn-outline-primary rounded-pill">
+            <i class="fas fa-th-large me-1"></i> <span data-i18n="all_categories">All Categories</span>
+        </a>
+    </div>
+    
+    {% if category.description %}
+        <p class="lead mb-4">{{ category.description }}</p>
+    {% endif %}
+    
+    {% if products %}
+        <div class="row">
+            {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="product-card">
+                        {% if product.is_hot %}
+                            <div class="product-badge">
+                                <span class="badge-hot" data-i18n="hot">Hot</span>
+                            </div>
+                        {% elif product.is_trending %}
+                            <div class="product-badge">
+                                <span class="badge-trending" data-i18n="trending">Trending</span>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="product-img-container">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img">
+                            </a>
+                        </div>
+                        
+                        <div class="product-details">
+                            <h3 class="product-title">{{ product.name }}</h3>
+                            <div class="product-category">{{ product.category.name }}</div>
+                            
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            
+                            <div class="product-price">{{ "$%.2f"|format(product.price) }}</div>
+                            
+                            <div class="product-actions">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-details" data-i18n="details">Details</a>
+                                
+                                {% if product.id not in wishlist_product_ids %}
+                                    <a href="{{ url_for('add_to_wishlist', product_id=product.id) }}" class="btn btn-wishlist">
+                                        <i class="bi bi-heart"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('remove_from_wishlist', product_id=product.id) }}" class="btn btn-wishlist active">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <span data-i18n="no_products">No products found in this category</span>
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

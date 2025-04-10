@@ -1,0 +1,663 @@
+/* Main Styles for MultiShop E-commerce */
+
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Color Palette */
+  --background-color: #ffffff;
+  --primary-color: #3a6ea5;  /* Yangilangan ko'k rang - ilgari #0056b3 */
+  --secondary-color: #2a517a; /* Yangilangan to'q ko'k rang - ilgari #003d82 */
+  --accent-color: #00b04c;    /* Yorqinroq yashil - ilgari #00c853 */
+  --text-color: #333333;
+  --light-gray: #f5f5f5;
+  --medium-gray: #e0e0e0;
+  --dark-gray: #757575;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --success-color: #28a745;
+  --info-color: #17a2b8;
+  
+  /* Typography */
+  --font-primary: 'Poppins', sans-serif;
+  --font-secondary: 'Roboto', sans-serif;
+  --font-tertiary: 'Inter', sans-serif;
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-primary);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  font-weight: 400; /* Shriftlar vazni kamaytirildi - ilgari default */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-secondary);
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  margin-top: 0;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-accent {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-accent:hover {
+  background-color: #00a844;
+  border-color: #00a844;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Micro-animations for buttons */
+.btn-buy-now {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-buy-now:after {
+  content: "";
+  background: rgba(255, 255, 255, 0.3);
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  padding-top: 240%;
+  padding-left: 240%;
+  margin-top: -120%;
+  margin-left: -120%;
+  opacity: 0;
+  transition: all 0.7s;
+}
+
+.btn-buy-now:active:after {
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s;
+}
+
+/* Navbar */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.navbar-brand {
+  font-family: var(--font-secondary);
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+/* Hero Banner */
+.hero-banner {
+  background-color: var(--light-gray);
+  padding: 3rem 0;
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-banner img {
+  border-radius: 0.5rem;
+  transition: transform 0.5s ease;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.hero-banner:hover img {
+  transform: scale(1.02);
+}
+
+.hero-content {
+  padding: 2rem;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: var(--dark-gray);
+}
+
+/* Product Cards */
+.product-card {
+  border-radius: 0.7rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  background-color: white;
+  position: relative;
+  border: 2px solid var(--medium-gray);
+}
+
+.product-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-color);
+}
+
+.product-img-container {
+  overflow: hidden;
+  position: relative;
+  height: 200px;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.1);
+}
+
+.product-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.badge-hot {
+  background-color: var(--danger-color);
+  color: white;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-trending {
+  background-color: var(--warning-color);
+  color: var(--text-color);
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-limited {
+  background-color: var(--info-color);
+  color: white;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.product-details {
+  padding: 1rem;
+}
+
+.product-title {
+  font-weight: 500; /* Shriftlar vazni kamaytirildi - ilgari 600 */
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-price {
+  font-size: 1.2rem;
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.product-category {
+  font-size: 0.8rem;
+  color: var(--dark-gray);
+  margin-bottom: 0.8rem;
+}
+
+/* Category Cards */
+.category-card {
+  border-radius: 0.7rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  position: relative;
+  height: 150px;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.category-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.category-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+}
+
+.category-title {
+  color: white;
+  font-weight: 500; /* Shriftlar vazni kamaytirildi - ilgari 600 */
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+/* Product Detail Page */
+.product-detail-img {
+  width: 100%;
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.product-detail-title {
+  font-size: 2rem;
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  margin-bottom: 1rem;
+}
+
+.product-detail-price {
+  font-size: 1.8rem;
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.product-detail-category {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: var(--dark-gray);
+}
+
+.product-detail-description {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.stock-info {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 500; /* Shriftlar vazni kamaytirildi - ilgari 600 */
+  margin-bottom: 1.5rem;
+}
+
+.in-stock {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.low-stock {
+  background-color: var(--warning-color);
+  color: var(--text-color);
+}
+
+.out-of-stock {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+/* Ratings */
+.rating {
+  color: #FFD700;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 3rem 0;
+  margin-top: 3rem;
+}
+
+.footer h5 {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500; /* Shriftlar vazni kamaytirildi - ilgari 600 */
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: white;
+  padding-left: 5px;
+}
+
+.social-icons a {
+  color: white;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: var(--accent-color);
+  transform: translateY(-3px);
+}
+
+/* Admin Dashboard */
+.admin-sidebar {
+  background-color: var(--secondary-color);
+  color: white;
+  min-height: calc(100vh - 56px);
+  padding-top: 1.5rem;
+}
+
+.admin-sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.8rem 1rem;
+  border-radius: 0.3rem;
+  margin-bottom: 0.3rem;
+  transition: all 0.3s ease;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.admin-sidebar .nav-link i {
+  margin-right: 0.5rem;
+}
+
+.admin-content {
+  padding: 1.5rem;
+}
+
+.admin-card {
+  border: none;
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.admin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.admin-card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Forms */
+.form-control {
+  border-radius: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--medium-gray);
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(58, 110, 165, 0.25);
+}
+
+/* Auth Pages */
+.auth-container {
+  max-width: 450px;
+  margin: 3rem auto;
+  padding: 2rem;
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-title {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Stats Dashboard */
+.stats-card {
+  background-color: white;
+  border-radius: 0.7rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stats-number {
+  font-size: 2.5rem;
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.stats-title {
+  font-size: 1rem;
+  color: var(--dark-gray);
+  margin-bottom: 0;
+}
+
+.stats-chart {
+  height: 300px;
+  margin-bottom: 1.5rem;
+}
+
+/* Wishlist */
+.wishlist-empty {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.wishlist-empty i {
+  font-size: 5rem;
+  color: var(--medium-gray);
+  margin-bottom: 1.5rem;
+}
+
+.wishlist-empty-text {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--dark-gray);
+}
+
+/* Language Selector */
+.language-selector {
+  margin-left: 1rem;
+}
+
+.language-selector .dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.language-selector .dropdown-item.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* 404 Page */
+.error-page {
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.error-code {
+  font-size: 8rem;
+  font-weight: 600; /* Shriftlar vazni kamaytirildi - ilgari 700 */
+  color: var(--primary-color);
+  line-height: 1;
+  margin-bottom: 2rem;
+}
+
+.error-message {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.error-description {
+  font-size: 1.2rem;
+  color: var(--dark-gray);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .product-detail-title {
+    font-size: 1.8rem;
+  }
+  
+  .product-detail-price {
+    font-size: 1.5rem;
+  }
+  
+  .admin-sidebar {
+    min-height: auto;
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero-content {
+    padding: 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: 1.8rem;
+  }
+  
+  .error-code {
+    font-size: 6rem;
+  }
+  
+  .error-message {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .product-title {
+    font-size: 1rem;
+  }
+  
+  .product-price {
+    font-size: 1rem;
+  }
+  
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  
+  .stats-number {
+    font-size: 2rem;
+  }
+  
+  .error-code {
+    font-size: 4rem;
+  }
+  
+  .error-message {
+    font-size: 1.2rem;
+  }
+}

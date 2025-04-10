@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MultiShop - Your One-Stop E-commerce Destination">
+    <title>{% block title %}MultiShop{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/frames.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                <i class="fas fa-shopping-bag me-2 text-primary"></i>MultiShop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('index') %}active{% endif %}" href="{{ url_for('index') }}" data-i18n="home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('all_categories') %}active{% endif %}" href="{{ url_for('all_categories') }}" data-i18n="categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-i18n="deals">Deals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('wishlist') %}active{% endif %}" href="{{ url_for('wishlist') }}">
+                            <i class="bi bi-heart me-1"></i><span data-i18n="wishlist">Wishlist</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <!-- Language Selector -->
+                    <div class="dropdown language-selector">
+                        <a class="btn btn-sm btn-light dropdown-toggle rounded-pill" href="#" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if session.get('language') == 'es' %}
+                                <img src="{{ url_for('static', filename='img/flag-es.svg') }}" alt="Spanish" width="20" height="15" class="me-1">
+                                ES
+                            {% elif session.get('language') == 'fr' %}
+                                <img src="{{ url_for('static', filename='img/flag-fr.svg') }}" alt="French" width="20" height="15" class="me-1">
+                                FR
+                            {% elif session.get('language') == 'de' %}
+                                <img src="{{ url_for('static', filename='img/flag-de.svg') }}" alt="German" width="20" height="15" class="me-1">
+                                DE
+                            {% elif session.get('language') == 'ru' %}
+                                <img src="{{ url_for('static', filename='img/flag-ru.svg') }}" alt="Russian" width="20" height="15" class="me-1">
+                                RU
+                            {% elif session.get('language') == 'it' %}
+                                <img src="{{ url_for('static', filename='img/flag-it.svg') }}" alt="Italian" width="20" height="15" class="me-1">
+                                IT
+                            {% elif session.get('language') == 'tr' %}
+                                <img src="{{ url_for('static', filename='img/flag-tr.svg') }}" alt="Turkish" width="20" height="15" class="me-1">
+                                TR
+                            {% else %}
+                                <img src="{{ url_for('static', filename='img/flag-en.svg') }}" alt="English" width="20" height="15" class="me-1">
+                                EN
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li>
+                                <a class="dropdown-item {% if session.get('language') == 'en' or not session.get('language') %}active{% endif %}" href="{{ url_for('change_language', lang='en') }}">
+                                    <img src="{{ url_for('static', filename='img/flag-en.svg') }}" alt="English" width="20" height="15" class="me-2">
+                                    English
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {% if session.get('language') == 'es' %}active{% endif %}" href="{{ url_for('change_language', lang='es') }}">
+                                    <img src="{{ url_for('static', filename='img/flag-es.svg') }}" alt="Spanish" width="20" height="15" class="me-2">
+                                    Español
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {% if session.get('language') == 'fr' %}active{% endif %}" href="{{ url_for('change_language', lang='fr') }}">
+                                    <img src="{{ url_for('static', filename='img/flag-fr.svg') }}" alt="French" width="20" height="15" class="me-2">
+                                    Français
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item {% if session.get('language') == 'de' %}active{% endif %}" href="{{ url_for('change_language', lang='de') }}">
+                                    <img src="{{ url_for('static', filename='img/flag-de.svg') }}" alt="German" width="20" height="15" class="me-2">
+                                    Deutsch
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {% if session.get('language') == 'ru' %}active{% endif %}" href="{{ url_for('change_language', lang='ru') }}">
+                                    <img src="{{ url_for('static', filename='img/flag-ru.svg') }}" alt="Russian" width="20" height="15" class="me-2">
+                                    Русский
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {% if session.get('language') == 'it' %}active{% endif %}" href="{{ url_for('change_language', lang='it') }}">
+                                    <img src="{{ url_for('static', filename='img/flag-it.svg') }}" alt="Italian" width="20" height="15" class="me-2">
+                                    Italiano
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {% if session.get('language') == 'tr' %}active{% endif %}" href="{{ url_for('change_language', lang='tr') }}">
+                                    <img src="{{ url_for('static', filename='img/flag-tr.svg') }}" alt="Turkish" width="20" height="15" class="me-2">
+                                    Türkçe
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Admin Panel Link -->
+                    <a href="{{ url_for('admin_login') }}" class="btn btn-sm btn-primary rounded-pill ms-2">
+                        <i class="fas fa-user-shield me-1"></i> <span data-i18n="admin">Admin</span>
+                    </a>
+                    
+                    <!-- Stats Link -->
+                    <a href="{{ url_for('stats_login') }}" class="btn btn-sm btn-info rounded-pill ms-2 text-white">
+                        <i class="fas fa-chart-line me-1"></i> <span data-i18n="stats">Stats</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="container py-4">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 data-i18n="about_us">About Us</h5>
+                    <p class="text-white-50" data-i18n="footer_about">MultiShop is your one-stop e-commerce destination for a wide range of products across multiple categories.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 data-i18n="information">Information</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" data-i18n="about_us_link">About Us</a></li>
+                        <li><a href="#" data-i18n="contact_us">Contact Us</a></li>
+                        <li><a href="#" data-i18n="privacy_policy">Privacy Policy</a></li>
+                        <li><a href="#" data-i18n="terms_conditions">Terms & Conditions</a></li>
+                        <li><a href="#" data-i18n="shipping_policy">Shipping Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 data-i18n="my_account">My Account</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" data-i18n="order_history">Order History</a></li>
+                        <li><a href="{{ url_for('wishlist') }}" data-i18n="my_wishlist">My Wishlist</a></li>
+                        <li><a href="#" data-i18n="track_order">Track Order</a></li>
+                        <li><a href="#" data-i18n="returns">Returns</a></li>
+                        <li><a href="#" data-i18n="newsletter">Newsletter</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 data-i18n="newsletter_signup">Newsletter Signup</h5>
+                    <p class="text-white-50" data-i18n="newsletter_info">Subscribe to our newsletter to get updates on our latest products and promotions.</p>
+                    <form class="mb-3">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Email Address" aria-label="Email Address" data-i18n="email_placeholder">
+                            <button class="btn btn-accent" type="button" data-i18n="subscribe">Subscribe</button>
+                        </div>
+                    </form>
+                    <div class="text-white-50">
+                        <i class="fas fa-shield-alt me-1"></i> <span data-i18n="secure_payments">Secure Payments</span>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-white-50 mb-0" data-i18n="copyright"> 2023 MultiShop. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="text-white-50">
+                        <i class="fab fa-cc-visa me-2"></i>
+                        <i class="fab fa-cc-mastercard me-2"></i>
+                        <i class="fab fa-cc-paypal me-2"></i>
+                        <i class="fab fa-cc-apple-pay"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Main JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Translations -->
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set the language based on the session
+            let currentLang = '{{ session.get("language", "en") }}';
+            setLanguage(currentLang);
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

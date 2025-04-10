@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.translated_name }} - MultiShop{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Product Image Slider */
+    .product-image-slider {
+        position: relative;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+    
+    .product-slider-main {
+        width: 100%;
+        border-radius: 1rem;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    
+    .product-slider-main img {
+        width: 100%;
+        height: 500px;
+        object-fit: contain;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+        border-radius: 1rem;
+    }
+    
+    .product-slider-nav {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        padding-bottom: 10px;
+    }
+    
+    .product-slider-nav::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .product-slider-nav::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .product-slider-nav::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 10px;
+    }
+    
+    .slider-thumb {
+        min-width: 80px;
+        height: 80px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .slider-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .slider-thumb.active {
+        border-color: var(--primary-color);
+    }
+    
+    .product-detail-title {
+        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-detail-price {
+        font-weight: 700;
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin: 1rem 0;
+    }
+    
+    .product-detail-category a {
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .stock-info {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .in-stock {
+        color: #28a745;
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    
+    .low-stock {
+        color: #fd7e14;
+        background-color: rgba(253, 126, 20, 0.1);
+    }
+    
+    .out-of-stock {
+        color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    
+    .section-divider {
+        height: 1px;
+        background-color: #e5e5e5;
+        margin: 1.5rem 0;
+    }
+    
+    .feature-item {
+        padding: 0.8rem 1.2rem;
+        border-radius: 0.5rem;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        background-color: white;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        transform: translateY(-3px);
+    }
+    
+    .detail-star-rating {
+        color: #ffc107;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .detail-star-rating i {
+        margin-right: 3px;
+    }
+    
+    .btn-action {
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        padding: 0.8rem 1.5rem;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-wishlist-lg {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-wishlist-lg:hover {
+        transform: translateY(-3px) scale(1.05);
+    }
+    
+    .product-description {
+        line-height: 1.8;
+        color: #505050;
+    }
+    
+    .section-divider {
+        height: 1px;
+        background-color: #e5e5e5;
+        margin: 1.5rem 0;
+    }
+    
+    .related-title {
+        font-weight: 700;
+        margin-bottom: 2rem;
+    }
+    
+    /* Updated style for affiliate button */
+    .btn-amazon {
+        background-color: #FF9900;
+        border-color: #FF9900;
+        color: white;
+    }
+    
+    .btn-amazon:hover {
+        background-color: #e88b00;
+        border-color: #e88b00;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row py-5 product-detail">
+    <!-- Product Images with Slider -->
+    <div class="col-lg-6 mb-4">
+        <div class="product-image-slider">
+            <!-- Main Image Slider -->
+            <div class="product-slider-main">
+                {% if product_images %}
+                    <img id="main-product-img" src="{{ product_images[0].image_url }}" alt="{{ product.translated_name }}">
+                {% else %}
+                    <img id="main-product-img" src="{{ product.image_url }}" alt="{{ product.translated_name }}">
+                {% endif %}
+            </div>
+            
+            <!-- Thumbnails Navigation -->
+            {% if product_images|length > 1 %}
+                <div class="product-slider-nav">
+                    {% for image in product_images %}
+                        <div class="slider-thumb {% if loop.index0 == 0 %}active{% endif %}" 
+                             data-index="{{ loop.index0 }}" 
+                             data-src="{{ image.image_url }}">
+                            <img src="{{ image.image_url }}" alt="{{ product.translated_name }} - Image {{ loop.index }}">
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Product Details -->
+    <div class="col-lg-6">
+        <h1 class="product-detail-title">{{ product.translated_name }}</h1>
+        
+        <div class="detail-star-rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+            <span class="text-muted ms-2">(50 Reviews)</span>
+        </div>
+        
+        <h2 class="product-detail-price">{{ "$%.2f"|format(product.price) }}</h2>
+        
+        <div class="product-detail-category mb-3">
+            <span class="text-muted" data-i18n="category">Category:</span>
+            <a href="{{ url_for('category_products', category_id=product.category_id) }}" class="ms-1 text-primary fw-medium">{{ product.category.translated_name }}</a>
+        </div>
+        
+        <!-- Stock Information -->
+        {% if product.stock > 5 %}
+            <div class="stock-info in-stock mb-4">
+                <i class="fas fa-check-circle me-1"></i> <span data-i18n="in_stock">In Stock</span> ({{ product.stock }} available)
+            </div>
+        {% elif product.stock > 0 %}
+            <div class="stock-info low-stock mb-4">
+                <i class="fas fa-exclamation-circle me-1"></i> <span data-i18n="low_stock">Low Stock</span> (Only {{ product.stock }} left)
+            </div>
+        {% else %}
+            <div class="stock-info out-of-stock mb-4">
+                <i class="fas fa-times-circle me-1"></i> <span data-i18n="out_of_stock">Out of Stock</span>
+            </div>
+        {% endif %}
+        
+        <div class="product-description mb-4">
+            {{ product.translated_description }}
+        </div>
+        
+        <div class="section-divider"></div>
+        
+        <!-- Action Buttons -->
+        <div class="d-grid gap-3 d-md-flex mb-4">
+            {% if product.affiliate_link %}
+                <a href="{{ product.affiliate_link }}" target="_blank" class="btn btn-amazon btn-lg btn-action flex-grow-1" {% if product.stock <= 0 %}disabled{% endif %}>
+                    <i class="fab fa-amazon me-2"></i> 
+                    <span data-i18n="buy_now_amazon">Buy on Amazon</span>
+                </a>
+            {% else %}
+                <button class="btn btn-accent btn-lg btn-action flex-grow-1" {% if product.stock <= 0 %}disabled{% endif %}>
+                    <i class="fas fa-shopping-cart me-2"></i> 
+                    <span data-i18n="buy_now">Buy Now</span>
+                </button>
+            {% endif %}
+            
+            {% if product.id not in wishlist_product_ids %}
+                <form method="post" action="{{ url_for('add_to_wishlist', product_id=product.id) }}">
+                    <button type="submit" class="btn btn-outline-danger btn-wishlist-lg">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('remove_from_wishlist', product_id=product.id) }}" class="btn btn-danger btn-wishlist-lg">
+                    <i class="bi bi-heart-fill"></i>
+                </a>
+            {% endif %}
+        </div>
+        
+        <!-- Extra Product Features -->
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <div class="feature-item">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-truck text-primary me-2"></i>
+                        <span data-i18n="free_shipping">Free Shipping</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="feature-item">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <span data-i18n="quality_checked">Quality Checked</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="feature-item">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-undo text-info me-2"></i>
+                        <span data-i18n="returns_30day">30-Day Returns</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Products -->
+{% if related_products %}
+<section class="mt-5">
+    <h2 class="section-title mb-4" data-i18n="related_products">Related Products</h2>
+    
+    <div class="row">
+        {% for related in related_products %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    {% if related.is_hot %}
+                        <div class="product-badge">
+                            <span class="badge-hot" data-i18n="hot">Hot</span>
+                        </div>
+                    {% elif related.is_trending %}
+                        <div class="product-badge">
+                            <span class="badge-trending" data-i18n="trending">Trending</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="product-img-container">
+                        <a href="{{ url_for('product_detail', product_id=related.id) }}">
+                            <img src="{{ related.image_url }}" alt="{{ related.translated_name }}" class="product-img">
+                        </a>
+                        <div class="product-actions">
+                            <a href="{{ url_for('product_detail', product_id=related.id) }}" class="btn-quick-view">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            {% if related.id not in wishlist_product_ids %}
+                                <form method="post" action="{{ url_for('add_to_wishlist', product_id=related.id) }}" class="d-inline">
+                                    <button type="submit" class="btn-wishlist">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a href="{{ url_for('remove_from_wishlist', product_id=related.id) }}" class="btn-wishlist active">
+                                    <i class="bi bi-heart-fill"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <a href="{{ url_for('product_detail', product_id=related.id) }}" class="product-title">{{ related.translated_name }}</a>
+                        <div class="product-price">{{ "$%.2f"|format(related.price) }}</div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- JavaScript for Image Slider -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbs = document.querySelectorAll('.slider-thumb');
+    const mainImg = document.getElementById('main-product-img');
+    
+    thumbs.forEach(thumb => {
+        thumb.addEventListener('click', function() {
+            // Update active state
+            thumbs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update main image
+            mainImg.src = this.dataset.src;
+            
+            // Optional: Smooth fade transition
+            mainImg.style.opacity = 0;
+            setTimeout(() => {
+                mainImg.style.opacity = 1;
+            }, 100);
+        });
+    });
+});
+</script>
+{% endblock %}

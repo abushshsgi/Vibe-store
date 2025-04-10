@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Wishlist - MultiShop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="heading">
+        <h1 class="page-title" data-i18n="wishlist">Wishlist</h1>
+        <p class="text-muted" data-i18n="wishlist_description">Items you have saved for later</p>
+    </div>
+    
+    {% if products %}
+        <div class="row mt-4">
+            {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="product-card">
+                        {% if product.is_hot %}
+                            <div class="product-badge">
+                                <span class="badge-hot" data-i18n="hot">Hot</span>
+                            </div>
+                        {% elif product.is_trending %}
+                            <div class="product-badge">
+                                <span class="badge-trending" data-i18n="trending">Trending</span>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="product-img-container">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                                <img src="{{ product.image_url }}" alt="{{ product.translated_name }}" class="product-img">
+                            </a>
+                            <div class="product-actions">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn-quick-view">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('remove_from_wishlist', product_id=product.id) }}" class="btn-wishlist active">
+                                    <i class="bi bi-heart-fill"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-title">{{ product.translated_name }}</a>
+                            <div class="product-price">{{ "$%.2f"|format(product.price) }}</div>
+                            <div class="product-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            
+                            <div class="mt-3">
+                                {% if product.affiliate_link %}
+                                    <a href="{{ product.affiliate_link }}" target="_blank" class="btn btn-sm btn-amazon">
+                                        <i class="fab fa-amazon me-1"></i> 
+                                        <span data-i18n="buy_on_amazon">Buy on Amazon</span>
+                                    </a>
+                                {% else %}
+                                    <button class="btn btn-sm btn-accent">
+                                        <i class="fas fa-shopping-cart me-1"></i> 
+                                        <span data-i18n="add_to_cart">Add to Cart</span>
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state my-5 text-center py-5">
+            <i class="bi bi-heart text-muted" style="font-size: 4rem;"></i>
+            <h3 class="mt-4" data-i18n="wishlist_empty">Your wishlist is empty</h3>
+            <p class="text-muted mb-4" data-i18n="wishlist_empty_desc">Save items you like by clicking the heart icon on products</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                <i class="fas fa-shopping-bag me-2"></i> <span data-i18n="continue_shopping">Continue Shopping</span>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

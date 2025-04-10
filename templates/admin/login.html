@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Login - MultiShop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-login-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        padding: 50px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .admin-login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+    }
+    
+    .login-sidebar {
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                    url('https://source.unsplash.com/random/600x800?store') center/cover no-repeat;
+        color: white;
+        padding: 40px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .login-sidebar h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .login-sidebar p {
+        opacity: 0.9;
+        margin-bottom: 30px;
+    }
+    
+    .login-form {
+        padding: 40px;
+    }
+    
+    .login-form h1 {
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #333;
+    }
+    
+    .login-form .form-floating {
+        margin-bottom: 20px;
+    }
+    
+    .login-form .form-control {
+        border-radius: 8px;
+        padding: 12px 15px;
+        height: calc(3.5rem + 2px);
+        font-size: 1rem;
+    }
+    
+    .login-form .form-floating label {
+        padding: 1rem 1rem;
+    }
+    
+    .login-btn {
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 123, 255, 0.2);
+    }
+    
+    @media (max-width: 767.98px) {
+        .login-sidebar {
+            display: none;
+        }
+        
+        .admin-login-card {
+            max-width: 500px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-login-container">
+    <div class="admin-login-card">
+        <div class="row g-0">
+            <div class="col-md-6">
+                <div class="login-sidebar">
+                    <h2>MultiShop Admin</h2>
+                    <p class="lead">Access the control panel to manage your e-commerce store, products, and content.</p>
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-box fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">Manage Products</h5>
+                                <p class="mb-0 small">Add, edit, and remove products</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-tags fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">Manage Categories</h5>
+                                <p class="mb-0 small">Create and organize categories</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-chart-line fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">View Statistics</h5>
+                                <p class="mb-0 small">Track sales and visitor data</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="login-form">
+                    <div class="text-center mb-4">
+                        <h1>Admin Login</h1>
+                        <p class="text-muted">Please enter your credentials to continue</p>
+                    </div>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="post" action="{{ url_for('admin_login') }}">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Username" required>
+                            <label for="username">Username</label>
+                        </div>
+                        
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Password" required>
+                            <label for="password">Password</label>
+                        </div>
+                        
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-primary login-btn">
+                                <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-muted">
+                                <a href="{{ url_for('index') }}" class="text-decoration-none">
+                                    <i class="fas fa-arrow-left me-1"></i> Return to website
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

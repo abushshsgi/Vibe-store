@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistika Dashboard - MultiShop{% endblock %}
+
+{% block extra_css %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stats-dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" id="stats-charts-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold mb-0">Statistika Paneli</h1>
+            <p class="text-muted mt-2">Sayt faoliyati va foydalanuvchilar harakati bo'yicha to'liq ma'lumotlar</p>
+        </div>
+        <div>
+            <a href="{{ url_for('stats_logout') }}" class="btn btn-outline-danger rounded-pill">
+                <i class="fas fa-sign-out-alt me-1"></i> <span>Chiqish</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Quick Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-metrics-card" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="info">
+                    <p>Bugungi tashrif</p>
+                    <h3>{{ today_visitors }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-metrics-card" style="background: linear-gradient(135deg, #FF9800 0%, #FF5722 100%);">
+                <div class="icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="info">
+                    <p>So'nggi soat</p>
+                    <h3>{{ last_hour_visitors }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-metrics-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                <div class="icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="info">
+                    <p>So'nggi 6 soat</p>
+                    <h3>{{ last_6h_visitors }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-metrics-card" style="background: linear-gradient(135deg, #4A00E0 0%, #8E2DE2 100%);">
+                <div class="icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="info">
+                    <p>So'nggi 24 soat</p>
+                    <h3>{{ last_24h_visitors }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Time Filters -->
+    <div class="stats-filters">
+        <button class="btn btn-sm stats-filter-btn active" data-filter="7d">7 kun</button>
+        <button class="btn btn-sm stats-filter-btn" data-filter="1m">1 oy</button>
+        <button class="btn btn-sm stats-filter-btn" data-filter="3m">3 oy</button>
+    </div>
+    
+    <!-- Daily Visitors Chart -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <div class="stats-card">
+                <h3 class="stats-title">
+                    <i class="fas fa-chart-line me-2 text-primary"></i>
+                    Kunlik tashriflar dinamikasi
+                </h3>
+                <div class="stats-chart">
+                    <canvas id="daily-visitors-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="stats-card">
+                <h3 class="stats-title">
+                    <i class="fas fa-clock me-2 text-info"></i>
+                    Soatlik taqsimlanish
+                </h3>
+                <div class="stats-chart">
+                    <canvas id="hourly-stats-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Most Viewed Products & Categories -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="stats-card">
+                <h3 class="stats-title">
+                    <i class="fas fa-medal me-2 text-danger"></i>
+                    Eng ko'p ko'rilgan mahsulotlar
+                </h3>
+                {% if most_viewed_products %}
+                    <div class="stats-chart">
+                        <canvas id="product-views-chart"></canvas>
+                    </div>
+                    <div class="table-responsive mt-4">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mahsulot</th>
+                                    <th>Ko'rilgan</th>
+                                    <th>Kategoriya</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in most_viewed_products %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                                               class="text-decoration-none" target="_blank">
+                                                {{ product.name }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary rounded-pill">{{ product.views }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">{{ product.category.name }}</span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Hali hech qanday mahsulot ko'rilishi kuzatilmagan.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Popular Categories -->
+        <div class="col-lg-6 mb-4">
+            <div class="stats-card">
+                <h3 class="stats-title">
+                    <i class="fas fa-tags me-2 text-success"></i>
+                    Ommabop kategoriyalar
+                </h3>
+                {% if most_popular_categories %}
+                    <div class="stats-chart">
+                        <canvas id="category-views-chart"></canvas>
+                    </div>
+                    <div class="table-responsive mt-4">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Kategoriya</th>
+                                    <th>Ko'rilgan</th>
+                                    <th>Ulushi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cat in most_popular_categories %}
+                                    <tr>
+                                        <td>{{ cat[0].name }}</td>
+                                        <td>
+                                            <span class="badge bg-success rounded-pill">{{ cat[1] }}</span>
+                                        </td>
+                                        <td>
+                                            {% set total_views = most_popular_categories|sum(attribute='1') %}
+                                            {% if total_views > 0 %}
+                                                {% set percentage = (cat[1] / total_views * 100)|round %}
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" 
+                                                         style="width: {{ percentage }}%;" 
+                                                         aria-valuenow="{{ percentage }}" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                                <small class="text-muted">{{ percentage }}%</small>
+                                            {% else %}
+                                                <small class="text-muted">0%</small>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Hali hech qanday kategoriya ko'rilishi kuzatilmagan.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart JS Config -->
+<script src="{{ url_for('static', filename='js/chart-config.js') }}"></script>
+{% endblock %}

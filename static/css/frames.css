@@ -1,0 +1,46 @@
+/* Styling for product, category, and banner frames */
+
+/* Product Cards */
+.product-card {
+  border: 2px solid var(--medium-gray) !important;
+}
+
+.product-card:hover {
+  border-color: var(--primary-color) !important;
+}
+
+/* Category Cards */
+.category-card {
+  border: 2px solid var(--medium-gray) !important;
+}
+
+.category-card:hover {
+  border-color: var(--primary-color) !important;
+}
+
+/* Hero Banner */
+.hero-banner {
+  border: 2px solid var(--medium-gray) !important;
+}
+
+.hero-banner:hover {
+  border-color: var(--primary-color) !important;
+}
+
+/* Admin cards */
+.admin-card {
+  border: 2px solid var(--medium-gray) !important;
+}
+
+.admin-card:hover {
+  border-color: var(--primary-color) !important;
+}
+
+/* Stats Cards */
+.stats-card {
+  border: 2px solid var(--medium-gray) !important;
+}
+
+.stats-card:hover {
+  border-color: var(--primary-color) !important;
+}

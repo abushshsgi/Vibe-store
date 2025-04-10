@@ -1,0 +1,132 @@
+/* Zamonaviy statistika dashboardi stillar */
+#stats-charts-container {
+    padding: 30px 15px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.stats-title {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    border-left: 4px solid #4285F4;
+    padding-left: 15px;
+}
+
+.stats-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    transition: all 0.3s ease;
+    height: 100%;
+    border: none;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.stats-card .stats-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #555;
+    border-left: none;
+    padding-left: 0;
+}
+
+.stats-card .stats-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #4285F4;
+}
+
+.stats-chart {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+.stats-filters {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stats-filter-btn {
+    border-radius: 20px;
+    padding: 6px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.stats-filter-btn.active {
+    background-color: #4285F4;
+    color: white;
+    border-color: #4285F4;
+}
+
+.stats-metrics-card {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #42b3f4 0%, #4285F4 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(66, 133, 244, 0.15);
+}
+
+.stats-metrics-card .icon {
+    font-size: 2.5rem;
+    margin-right: 20px;
+    opacity: 0.8;
+}
+
+.stats-metrics-card .info h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.stats-metrics-card .info p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .stats-chart {
+        height: 250px;
+    }
+    
+    .stats-card {
+        padding: 20px;
+    }
+    
+    .stats-card .stats-number {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-chart {
+        height: 200px;
+    }
+    
+    .stats-metrics-card {
+        padding: 15px;
+    }
+    
+    .stats-metrics-card .icon {
+        font-size: 2rem;
+        margin-right: 15px;
+    }
+    
+    .stats-metrics-card .info h3 {
+        font-size: 1.5rem;
+    }
+}
